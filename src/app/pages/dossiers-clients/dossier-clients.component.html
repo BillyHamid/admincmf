@@ -1,0 +1,57 @@
+<div class="containers flex h-screen">
+  <!-- Sidebar gauche -->
+  <div class="sidebar bg-[#d4e1d81c] w-80 flex flex-col border-r border-white/10">
+
+    <!-- En-tête -->
+    <div class="p-5 text-lg bg-white font-bold border-b text-gray-800">
+      <div class="mt-2"><i class="pi text-2xl pi-folder-open"></i> Dossiers en attente</div>
+    </div>
+
+    <!-- Liste des dossiers -->
+    <div class="flex-1 overflow-y-auto">
+      <ul>
+        <li *ngFor="let dossier of dossiers" class="border-b-2 bg-white ">
+          <a
+            [routerLink]="[dossier?.uuid, 'details', dossier?.prospectClient?.id]"
+            routerLinkActive="bg-coris-blue border-l-4 text-white border-coris-red"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="block px-4 py-3 text-sm hover:bg-coris-blue hover:text-white transition-all duration-150"
+          >
+            <div class="flex items-center gap-2 font-semibold">
+              <!-- Icône selon le type -->
+              <i
+                class="pi text-base text-coris-red"
+                [ngClass]="dossier?.typeClient === 'PHYSIQUE' ? 'pi-user' : 'pi-building'"
+              ></i>
+
+              {{ dossier?.prospectClient?.nom }} {{ dossier?.prospectClient?.prenom }}
+              {{dossier?.typeClient === 'MORALE' ? dossier?.prospectClient.raisonSociale : ''}}
+              {{dossier?.typeClient === 'ASSOCIATION' ? dossier?.prospectClient.nomOrganisation : ''}}
+            </div>
+
+            <div class="text-xs mt-1">Contact du prospect : {{ dossier?.prospectClient?.telephone1 }}</div>
+            <div class="text-xs mt-1">Type de client : {{ dossier?.typeClient }}</div>
+            <div class="text-xs font-semibold text-coris-red mt-1">
+              Soumis : {{ dossier?.dateSoumission | date: 'dd/MM/yyyy à HH:mm' }}
+            </div>
+          </a>
+        </li>
+
+      </ul>
+      <div *ngIf="loading">
+        <p class="text-gray-400 italic text-center mt-4">Chargement des dossiers...</p>
+        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+      </div>
+
+      <div *ngIf="!loading && dossiers.length === 0" class="text-center p-4">
+        <img ngSrc="assets/icons/empty.png" alt="" style="margin: auto" height="70" width="70">
+        <p class="text-gray-500 mt-4">Aucun dossier en attente</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="main flex-1 overflow-y-auto">
+    <router-outlet></router-outlet>
+  </div>
+</div>

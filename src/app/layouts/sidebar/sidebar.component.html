@@ -1,0 +1,55 @@
+<div [ngClass]="{'w-16': !isCollapsed, 'w-64': isCollapsed}" class="bg-white border-r-2 h-screen transition-width duration-300 z-10 fixed overflow-y-auto">
+
+  <div class="mt-16 mb-3">
+    <div class="flex p-3">
+      <p-avatar label="P" styleClass="mr-2" size="large" [style]="{ 'background-color': '#E30613', color: '#fff' }"/>
+      <div>
+        <p>{{ user?.agent?.firstname }} {{ user?.agent?.lastname }}</p>
+        <p class="text-slate-500 mt-0">{{ user?.role?.label }}</p>
+      </div>
+    </div>
+  </div>
+  <ul id="app-menu">
+    <ng-container *ngFor="let menuItem of menuService.mainMenu;">
+      <li class="font-light">
+        <ng-container >
+          <ng-container *ngIf="menuItem.children && menuItem.children.length > 0; else singleMenu">
+            <app-accordion-menu [menuItem]="menuItem"></app-accordion-menu>
+          </ng-container>
+          <ng-template #singleMenu>
+            @if (menuItem.permission !== undefined) {
+              <li class="flex items-center font-bold" *appHasPermission="[menuItem.permission]" [ngClass]="{'item-active ': isActive(menuItem.routerLink), 'text-gray-700': !isActive(menuItem.routerLink)}"
+                  (mouseenter)="showLabel = 'Accueil'" (mouseleave)="showLabel = null">
+                <a
+                  class="flex items-center font-light p-3"
+                  [routerLink]="menuItem.routerLink"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: false }">
+                  <fa-icon class="ml-3" [icon]="menuItem.icon"></fa-icon>
+                  <p class="ml-3 font-light">{{ menuItem.title }}</p>
+                </a>
+
+              </li>
+            } @else {
+              <li class="flex items-center font-bold" [ngClass]="{'item-active ': isActive(menuItem.routerLink), 'text-gray-700': !isActive(menuItem.routerLink)}"
+                  (mouseenter)="showLabel = 'Accueil'" (mouseleave)="showLabel = null">
+                <a
+                  class="flex items-center font-light p-3"
+                  [routerLink]="menuItem.routerLink"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: false }">
+                  <fa-icon class="ml-3" [icon]="menuItem.icon"></fa-icon>
+                  <p class="ml-3 font-light">{{ menuItem.title }}</p>
+                </a>
+
+              </li>
+            }
+
+
+          </ng-template>
+        </ng-container>
+      </li>
+    </ng-container>
+
+  </ul>
+</div>

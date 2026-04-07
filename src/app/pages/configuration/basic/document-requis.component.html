@@ -1,0 +1,123 @@
+<div class="flex h-screen w-full">
+  <div class="flex-1 overflow-y-auto p-4">
+    <div class="page-header pl-8 pr-8 pt-4 pb-2 flex justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Documents requis</h1>
+        <p class="font-extralight mt-1">Par type de destinataire</p>
+      </div>
+      <div class="mt-4">
+        <button (click)="showDialog()" pButton type="button" label="Ajouter" icon="pi pi-plus" class="p-button-outlined"></button>
+      </div>
+    </div>
+
+    <div class="m-8 card shadow-md border-2">
+      <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event.index)">
+        <p-tabPanel header="Personnes Physiques">
+          <ng-template pTemplate="content">
+            <ng-container *ngTemplateOutlet="tableTemplate"></ng-container>
+          </ng-template>
+        </p-tabPanel>
+        <p-tabPanel header="Personnes Morales">
+          <ng-template pTemplate="content">
+            <ng-container *ngTemplateOutlet="tableTemplate"></ng-container>
+          </ng-template>
+        </p-tabPanel>
+        <p-tabPanel header="Associations">
+          <ng-template pTemplate="content">
+            <ng-container *ngTemplateOutlet="tableTemplate"></ng-container>
+          </ng-template>
+        </p-tabPanel>
+<!--        <p-tabPanel header="Mandataires">-->
+<!--          <ng-template pTemplate="content">-->
+<!--            <ng-container *ngTemplateOutlet="tableTemplate"></ng-container>-->
+<!--          </ng-template>-->
+<!--        </p-tabPanel>-->
+      </p-tabView>
+    </div>
+
+    <ng-template #tableTemplate>
+      <p-table [value]="documents" [loading]="loading" [paginator]="true" [rows]="10" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Libellé</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-doc>
+          <tr>
+            <td>{{ doc.libelle }}</td>
+            <td>{{ doc.type }}</td>
+            <td>{{ doc.description }}</td>
+            <td>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-danger" (click)="delete(doc)"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="text-center">
+              <div class="flex flex-col items-center">
+                <img ngSrc="assets/icons/empty.png" alt="empty" height="50" width="50">
+                <h3 class="font-light mt-2">Aucun document trouvé</h3>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </ng-template>
+
+    <p-dialog header="Nouveau document requis"
+              [(visible)]="visible"
+              [modal]="true"
+              [style]="{ width: '45%' }">
+
+      <form [formGroup]="form" class="">
+        <!-- Ligne 1 : Libellé et Type -->
+        <div class="flex gap-4">
+          <div class="field flex-1 gap-4 mb-4">
+            <label for="libelle">Libellé <span class="text-red-700">*</span></label>
+            <input formControlName="libelle" id="libelle" class="adouk-input" />
+          </div>
+          <div class="field flex-1 gap-4 mb-4">
+            <label for="type">Type <span class="text-red-700">*</span></label>
+            <p-dropdown
+              id="type"
+              formControlName="type"
+              [options]="[
+                { label: 'Image', value: 'IMAGE' },
+                { label: 'Autre fichier', value: 'AUTRE_FICHIER' }
+              ]"
+              placeholder="Sélectionner un type"
+              class="adouk-select"
+              appendTo="body"
+            />
+          </div>
+        </div>
+
+        <!-- Ligne 2 : Description -->
+        <div class="field mb-4">
+          <label for="description">Description</label>
+          <textarea formControlName="description" id="description" rows="2" class="adouk-input"></textarea>
+        </div>
+
+        <!-- Ligne 3 : Destinataire (non modifiable ici) -->
+        <div class="field mb-4">
+          <label for="destinator">Destinataire</label>
+          <input [value]="selectedDestinator" id="destinator" disabled class="adouk-input" />
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex justify-end gap-2">
+          <p-button label="Fermer" severity="danger" (click)="visible = false" />
+          <p-button [disabled]="form.invalid" [loading]="processing" label="Enregistrer" (click)="save()" />
+        </div>
+      </form>
+    </p-dialog>
+
+
+    <p-confirmDialog appendTo="body" />
+    <p-toast />
+  </div>
+</div>

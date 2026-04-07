@@ -1,0 +1,9 @@
+<header class="bg-coris-blue text-white p-3 z-20 fixed top-0 left-0 w-full flex justify-between items-center">
+  <div class="flex items-center gap-3">
+    <img src="assets/logos/coris-meso-finance.png" alt="CORIS MESO FINANCE" class="h-10" />
+    <h1 class="text-xl font-bold">CORIS MESO FINANCE</h1>
+  </div>
+  <button (click)="logout()" *ngIf="isAuthenticated" class="bg-coris-red text-white font-bold py-2 px-4 hover:bg-coris-red-dark transition">Déconnexion</button>
+</header>
+<p-confirmDialog appendTo="body"></p-confirmDialog>
+<p-toast />

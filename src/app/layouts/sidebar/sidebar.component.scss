@@ -1,0 +1,9 @@
+@import '../../../../node_modules/tailwindcss/utilities.css';
+
+
+
+.item-active {
+  background-color: rgba(227, 6, 19, 0.12);
+  color: #002855;
+  transition: 0.2s;
+}

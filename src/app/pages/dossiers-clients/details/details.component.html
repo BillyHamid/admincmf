@@ -1,0 +1,343 @@
+<div *ngIf="client && !client?.numIfu && !client?.nomOrganisation" class="bg-white p-6 rounded shadow-md w-full max-w-5xl mx-auto space-y-6">
+  <!-- 🧍 Informations principales -->
+  <div>
+    <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+      <i class="pi pi-user text-xl"></i>
+      Informations du client
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+      <div><span class="font-bold">Nom :</span> {{ client.nom }}</div>
+      <div><span class="font-bold">Prénom :</span> {{ client.prenom }}</div>
+      <div><span class="font-bold">Email :</span> {{ client.email }}</div>
+      <div><span class="font-bold">Téléphone :</span> {{ client.telephone1 }}</div>
+      <div><span class="font-bold">Adresse :</span> {{ client.adresse }}</div>
+      <div><span class="font-bold">Profession :</span> {{ client.profession }}</div>
+      <div><span class="font-bold">Employeur :</span> {{ client.employeur }}</div>
+      <div><span class="font-bold">Adresse employeur :</span> {{ client.adresseEmployeur }}</div>
+      <div><span class="font-bold">Date de naissance :</span> {{ client.dateNaissance }}</div>
+      <div><span class="font-bold">Lieu de naissance :</span> {{ client.lieuNaissance }}</div>
+    </div>
+  </div>
+
+  <!-- 🗂️ Pièces justificatives -->
+  <div>
+    <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+      <i class="pi pi-folder-open text-xl"></i>
+      Pièces justificatives
+    </h2>
+
+    <ng-container *ngIf="client.piecesJustificatives?.length > 0; else noPiece">
+      <div class="grid grid-cols-1 gap-3">
+        <div
+          *ngFor="let piece of client.piecesJustificatives"
+          class="flex items-center justify-between bg-gray-50 p-3 border rounded hover:shadow transition"
+        >
+          <div class="flex items-center gap-4">
+            <i class="pi pi-image text-coris-blue text-2xl"></i>
+            <div>
+              <div class="font-medium text-gray-800">{{ piece.libelle }}</div>
+              <div class="text-xs text-gray-500">{{ piece.dateEnregistrement | date: 'dd/MM/yyyy HH:mm' }}</div>
+            </div>
+          </div>
+          <button
+            pButton
+            icon="pi pi-eye"
+            class="p-button-text p-button-sm text-primary"
+            (click)="visualiserPiece(piece.urlFichier)"
+          ></button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #noPiece>
+      <p class="text-sm text-gray-400 italic">Aucune pièce justificative fournie.</p>
+    </ng-template>
+  </div>
+
+  <!-- ✅ Actions -->
+  <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+    <button
+      pButton
+      label="Rejeter"
+      icon="pi pi-times"
+      class="p-button-outlined p-button-danger"
+      (click)="ouvrirRejectKyc()"
+    ></button>
+
+    <button
+      pButton
+      label="Valider"
+      icon="pi pi-check"
+      class="p-button-success"
+      (click)="ouvrirValidationKyc()"
+    ></button>
+  </div>
+</div>
+
+
+<div *ngIf="client && client?.numIfu" class="bg-white p-6 rounded shadow-md w-full max-w-5xl mx-auto space-y-6">
+  <!-- 🏢 Informations entreprise -->
+  <div>
+    <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+      <i class="pi pi-building text-xl"></i>
+      Informations de l'organisation
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+      <div><span class="font-bold">Raison sociale :</span> {{ client.raisonSociale }}</div>
+      <div><span class="font-bold">RCCM :</span> {{ client.rccm }}</div>
+      <div><span class="font-bold">Numéro IFU :</span> {{ client.numIfu }}</div>
+      <div><span class="font-bold">Forme juridique :</span> {{ client.formeJuridique }}</div>
+      <div><span class="font-bold">Domaine d'activité :</span> {{ client.domaineActivite }}</div>
+      <div><span class="font-bold">Adresse :</span> {{ client.adresse }}</div>
+      <div><span class="font-bold">Boîte postale :</span> {{ client.bp || '—' }}</div>
+    </div>
+  </div>
+
+  <!-- 👤 Informations responsable -->
+  <div>
+    <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+      <i class="pi pi-user text-xl"></i>
+      Responsable légal
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+      <div><span class="font-bold">Nom :</span> {{ client.nomResponsable }}</div>
+      <div><span class="font-bold">Prénom :</span> {{ client.prenomResponsable }}</div>
+      <div><span class="font-bold">Sexe :</span> {{ client.sexeResponsable }}</div>
+      <div><span class="font-bold">Téléphone :</span> {{ client.telResponsable }}</div>
+      <div><span class="font-bold">Email :</span> {{ client.emailResponsable }}</div>
+    </div>
+  </div>
+
+  <!-- 📁 Pièces justificatives -->
+  <div>
+    <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+      <i class="pi pi-folder text-xl"></i>
+      Pièces justificatives
+    </h2>
+
+    <ng-container *ngIf="client.piecesJustificatives?.length > 0; else noPiece">
+      <div class="grid grid-cols-1 gap-3">
+        <div
+          *ngFor="let piece of client.piecesJustificatives"
+          class="flex items-center justify-between bg-gray-50 p-3 border rounded hover:shadow transition"
+        >
+          <div class="flex items-center gap-4">
+            <i class="pi pi-image text-coris-blue text-2xl"></i>
+            <div>
+              <div class="font-medium text-gray-800">{{ piece.libelle }}</div>
+              <div class="text-xs text-gray-500">{{ piece.dateEnregistrement | date:'dd/MM/yyyy HH:mm' }}</div>
+            </div>
+          </div>
+          <button
+            pButton
+            icon="pi pi-eye"
+            class="p-button-text p-button-sm text-primary"
+            (click)="visualiserPiece(piece.urlFichier)"
+          ></button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #noPiece>
+      <p class="text-sm text-gray-400 italic">Aucune pièce justificative disponible.</p>
+    </ng-template>
+  </div>
+
+  <!-- ✅ Actions -->
+  <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+    <button
+      pButton
+      label="Rejeter"
+      icon="pi pi-times"
+      class="p-button-outlined p-button-danger"
+      (click)="ouvrirRejectKyc()"
+    ></button>
+
+    <button
+      pButton
+      label="Valider"
+      icon="pi pi-check"
+      class="p-button-success"
+      (click)="ouvrirValidationKyc()"
+    ></button>
+  </div>
+</div>
+
+<div *ngIf="client && client?.nomOrganisation" class="bg-white p-6 rounded shadow-md w-full max-w-5xl mx-auto space-y-6">
+  <!-- 🏢 Informations de l'organisation -->
+  <div>
+    <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+      <i class="pi pi-sitemap text-xl"></i>
+      Informations de l'association
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+      <div><span class="font-bold">Nom organisation :</span> {{ client.nomOrganisation }}</div>
+      <div><span class="font-bold">Type d'organisation :</span> {{ client.typeOrganisation }}</div>
+      <div><span class="font-bold">Domaine d'activité :</span> {{ client.domaineActivite }}</div>
+    </div>
+  </div>
+
+  <!-- 🙍 Représentant légal -->
+  <div>
+    <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+      <i class="pi pi-user text-xl"></i>
+      Représentant légal
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+      <div><span class="font-bold">Nom :</span> {{ client.nomRepresentant }}</div>
+      <div><span class="font-bold">Prénom :</span> {{ client.prenomRepresentant }}</div>
+      <div><span class="font-bold">Sexe :</span> {{ client.sexeRepresentant }}</div>
+      <div><span class="font-bold">Téléphone :</span> {{ client.telRepresentant }}</div>
+      <div><span class="font-bold">Email :</span> {{ client.emailRepresentant }}</div>
+      <div><span class="font-bold">Adresse :</span> {{ client.adresseRepresentant }}</div>
+    </div>
+  </div>
+
+  <!-- 📁 Pièces justificatives -->
+  <div *ngIf="client.piecesJustificatives?.length > 0">
+    <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+      <i class="pi pi-folder text-xl"></i>
+      Pièces justificatives
+    </h2>
+
+    <div class="grid grid-cols-1 gap-3">
+      <div
+        *ngFor="let piece of client.piecesJustificatives"
+        class="flex items-center justify-between bg-gray-50 p-3 border rounded hover:shadow transition"
+      >
+        <div class="flex items-center gap-4">
+          <i class="pi pi-image text-coris-blue text-2xl"></i>
+          <div>
+            <div class="font-medium text-gray-800">{{ piece.libelle }}</div>
+            <div class="text-xs text-gray-500">{{ piece.dateEnregistrement | date:'dd/MM/yyyy HH:mm' }}</div>
+          </div>
+        </div>
+        <button
+          pButton
+          icon="pi pi-eye"
+          class="p-button-text p-button-sm text-primary"
+          (click)="visualiserPiece(piece.urlFichier)"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!client.piecesJustificatives?.length">
+    <p class="text-sm text-gray-400 italic">Aucune pièce justificative disponible.</p>
+  </ng-container>
+
+  <!-- ✅ Actions -->
+  <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+    <button
+      pButton
+      label="Rejeter"
+      icon="pi pi-times"
+      class="p-button-outlined p-button-danger"
+      (click)="ouvrirRejectKyc()"
+    ></button>
+
+    <button
+      pButton
+      label="Valider"
+      icon="pi pi-check"
+      class="p-button-success p-button-outlined"
+      (click)="ouvrirValidationKyc()"
+    ></button>
+  </div>
+</div>
+
+
+
+<div *ngIf="loading" class="overlay-loader">
+  <div class="spinner"></div>
+</div>
+<!--<p-confirmDialog appendTo="body"></p-confirmDialog>-->
+<p-toast />
+<div *ngIf="fileLoading" class="overlay-loader">
+  <div class="spinner"></div>
+</div>
+
+<p-dialog
+  header="Validation Client"
+  [(visible)]="kycDialogVisible"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '35vw' }"
+>
+    <div class="flex ">
+      <div class="field flex-1">
+        <label for="agence">Agence du client <span class="text-red-600">*</span></label>
+        <div class="card flex flex-1 w-full justify-center">
+          <p-dropdown
+            id="agence"
+            [options]="agences"
+            optionLabel="agencyName"
+            [(ngModel)]="selectedAgence"
+            placeholder="Sélectionnez une agence"
+            [filter]="true"
+            class="adouk-select"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+
+      </div>
+    </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      label="Annuler"
+      class="p-button-text"
+      (click)="kycDialogVisible = false"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Valider"
+      class="p-button-sm p-button-success"
+      [disabled]="selectedAgence === null"
+      (click)="confirmerValidationKyc()"
+    ></button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Rejet Client"
+  [(visible)]="kycRejectDialogVisible"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '35vw' }"
+>
+  <div class="flex ">
+    <div class="field flex-1">
+      <label for="agence">Commentaire <span class="text-red-600">*</span></label>
+      <textarea [(ngModel)]="commentaire" class="adouk-input"></textarea>
+
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      label="Annuler"
+      class="p-button-text"
+      (click)="kycRejectDialogVisible = false"
+    ></button>
+    <button
+      pButton
+      type="button"
+      label="Valider"
+      class="p-button-sm p-button-success"
+      [disabled]="commentaire === null"
+      (click)="rejeterValidationKyc()"
+    ></button>
+  </ng-template>
+</p-dialog>
+

@@ -1,0 +1,24 @@
+.apple-segment {
+  display: inline-flex;
+  background-color: var(--coris-blue);
+  border-radius: 999px;
+  padding: 5px;
+  gap: 4px;
+
+  button {
+    border: none;
+    background-color: transparent;
+    padding: 5px 22px;
+    border-radius: 99px !important;
+    font-weight: 500;
+    color: #fff;
+    transition: 0.3s ease;
+    cursor: pointer;
+  }
+
+  button.active {
+    background-color: #fff;
+    color: black;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  }
+}

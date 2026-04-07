@@ -1,0 +1,165 @@
+<div class="flex h-screen w-full">
+  <div class="flex-1 overflow-y-auto p-4">
+    <div class="page-header pl-8 pr-8 pt-4 pb-2 flex justify-between items-center">
+      <div>
+        <a routerLink="/commercial/prospects" class="text-gray-600 hover:text-gray-800 mb-2 inline-block">← Retour aux prospects</a>
+        <h1 class="text-2xl font-bold">Détail du prospect</h1>
+        <p class="font-extralight mt-1">Informations du prospect</p>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="p-8 text-center">Chargement...</div>
+
+    <!-- Personne physique -->
+    <div *ngIf="!loading && prospect && isPhysique()" class="card shadow-md bg-white border-2 m-8 p-6">
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-user text-xl"></i>
+          Informations du prospect
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+          <div><span class="font-bold">Nom :</span> {{ prospect.nom }}</div>
+          <div><span class="font-bold">Prénom :</span> {{ prospect.prenom }}</div>
+          <div><span class="font-bold">Email :</span> {{ prospect.email }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ prospect.telephone1 }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ prospect.adresse || '—' }}</div>
+          <div><span class="font-bold">Profession :</span> {{ prospect.profession || '—' }}</div>
+          <div><span class="font-bold">Employeur :</span> {{ prospect.employeur || '—' }}</div>
+          <div><span class="font-bold">Date de naissance :</span> {{ prospect.dateNaissance | date: 'dd/MM/yyyy' }}</div>
+          <div><span class="font-bold">Lieu de naissance :</span> {{ prospect.lieuNaissance || '—' }}</div>
+          <div><span class="font-bold">Numéro CNIB :</span> {{ prospect.numeroCNIB }}</div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-folder-open text-xl"></i>
+          Pièces justificatives
+        </h2>
+        <ng-container *ngIf="prospect.piecesJustificatives?.length > 0; else noPiece">
+          <div class="grid grid-cols-1 gap-3">
+            <div *ngFor="let piece of prospect.piecesJustificatives" class="flex items-center justify-between bg-gray-50 p-3 border rounded">
+              <div>
+                <div class="font-medium text-gray-800">{{ piece.libelle }}</div>
+                <div class="text-xs text-gray-500">{{ piece.dateEnregistrement | date: 'dd/MM/yyyy HH:mm' }}</div>
+              </div>
+              <button pButton icon="pi pi-eye" class="p-button-text" (click)="visualiserPiece(piece.urlFichier)"></button>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noPiece>
+          <p class="text-sm text-gray-400 italic">Aucune pièce justificative.</p>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Personne morale -->
+    <div *ngIf="!loading && prospect && isMoral()" class="card shadow-md bg-white border-2 m-8 p-6">
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-building text-xl"></i>
+          Informations de l'entreprise
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+          <div><span class="font-bold">Raison sociale :</span> {{ prospect.raisonSociale }}</div>
+          <div><span class="font-bold">RCCM :</span> {{ prospect.rccm || '—' }}</div>
+          <div><span class="font-bold">Numéro IFU :</span> {{ prospect.numIfu || '—' }}</div>
+          <div><span class="font-bold">Forme juridique :</span> {{ prospect.formeJuridique || '—' }}</div>
+          <div><span class="font-bold">Domaine d'activité :</span> {{ prospect.domaineActivite || '—' }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ prospect.adresse || '—' }}</div>
+          <div><span class="font-bold">Email :</span> {{ prospect.email }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ prospect.telephone1 }}</div>
+        </div>
+      </div>
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-user text-xl"></i>
+          Responsable
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+          <div><span class="font-bold">Nom :</span> {{ prospect.nomResponsable }} {{ prospect.prenomResponsable }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ prospect.telResponsable }}</div>
+          <div><span class="font-bold">Email :</span> {{ prospect.emailResponsable }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ prospect.adresseResponsable || '—' }}</div>
+        </div>
+      </div>
+      <div>
+        <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-folder-open text-xl"></i>
+          Pièces justificatives
+        </h2>
+        <ng-container *ngIf="prospect.piecesJustificatives?.length > 0; else noPiece">
+          <div class="grid grid-cols-1 gap-3">
+            <div *ngFor="let piece of prospect.piecesJustificatives" class="flex items-center justify-between bg-gray-50 p-3 border rounded">
+              <div>
+                <div class="font-medium text-gray-800">{{ piece.libelle }}</div>
+                <div class="text-xs text-gray-500">{{ piece.dateEnregistrement | date: 'dd/MM/yyyy HH:mm' }}</div>
+              </div>
+              <button pButton icon="pi pi-eye" class="p-button-text" (click)="visualiserPiece(piece.urlFichier)"></button>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noPiece>
+          <p class="text-sm text-gray-400 italic">Aucune pièce justificative.</p>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Association -->
+    <div *ngIf="!loading && prospect && isAssociation()" class="card shadow-md bg-white border-2 m-8 p-6">
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-users text-xl"></i>
+          Informations de l'organisation
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+          <div><span class="font-bold">Nom :</span> {{ prospect.nomOrganisation }}</div>
+          <div><span class="font-bold">Type :</span> {{ prospect.typeOrganisation || '—' }}</div>
+          <div><span class="font-bold">Domaine d'activité :</span> {{ prospect.domaineActivite || '—' }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ prospect.adresse || '—' }}</div>
+          <div><span class="font-bold">Email :</span> {{ prospect.email }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ prospect.telephone1 }}</div>
+        </div>
+      </div>
+      <div class="mb-6">
+        <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-user text-xl"></i>
+          Représentant
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+          <div><span class="font-bold">Nom :</span> {{ prospect.nomRepresentant }} {{ prospect.prenomRepresentant }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ prospect.telRepresentant }}</div>
+          <div><span class="font-bold">Email :</span> {{ prospect.emailRepresentant }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ prospect.adresseRepresentant || '—' }}</div>
+        </div>
+      </div>
+      <div>
+        <h2 class="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="pi pi-folder-open text-xl"></i>
+          Pièces justificatives
+        </h2>
+        <ng-container *ngIf="prospect.piecesJustificatives?.length > 0; else noPiece">
+          <div class="grid grid-cols-1 gap-3">
+            <div *ngFor="let piece of prospect.piecesJustificatives" class="flex items-center justify-between bg-gray-50 p-3 border rounded">
+              <div>
+                <div class="font-medium text-gray-800">{{ piece.libelle }}</div>
+                <div class="text-xs text-gray-500">{{ piece.dateEnregistrement | date: 'dd/MM/yyyy HH:mm' }}</div>
+              </div>
+              <button pButton icon="pi pi-eye" class="p-button-text" (click)="visualiserPiece(piece.urlFichier)"></button>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noPiece>
+          <p class="text-sm text-gray-400 italic">Aucune pièce justificative.</p>
+        </ng-template>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && !prospect" class="p-8 text-center text-gray-500">
+      Prospect non trouvé ou accès non autorisé.
+    </div>
+  </div>
+</div>
+<div *ngIf="fileLoading" class="overlay-loader">
+  <div class="spinner"></div>
+</div>

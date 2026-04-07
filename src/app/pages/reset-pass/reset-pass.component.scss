@@ -1,0 +1,25 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-white {
+  animation: fadeIn 0.7s ease-in-out;
+}
+
+.bg-green-800 {
+  background-color: #166534 !important;
+  border: none;
+  border-radius: 0px;
+  transition: 0.3s;
+}
+
+.border-orange-300{
+  border-color: #f97316 !important;
+}

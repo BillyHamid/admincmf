@@ -1,0 +1,68 @@
+<div class="flex h-screen w-full">
+  <div class="flex-1 overflow-y-auto p-4">
+    <div class="page-header pl-9 pr-9 pt-6 pb-2 flex justify-between">
+      <div >
+        <h1 class="text-2xl font-bold">Gestion utilisateur</h1>
+        <p class="font-extralight mt-1">
+          Liste des utilisateurs et de leurs rôles
+        </p>
+      </div>
+      <div class="mt-4">
+        <app-user-form mode="create" (onDone)="loadUsersList()"></app-user-form>
+      </div>
+    </div>
+    <div class="card shadow-md bg-white border-2 m-8 p-3">
+      <p-table  [rows]="10" [paginator]="true" [loading]="loading" [value]="users" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nom & Prénom (s)</th>
+            <th>Mail</th>
+            <th>Agence</th>
+            <th>Statut</th>
+            <th>Role</th>
+            <th>Dernière connexion</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>{{ user?.agent?.firstname }} {{ user?.agent?.lastname }}</td>
+            <td>
+              {{ user?.agent?.email }}
+            </td>
+            <td>
+              {{ user?.agent?.agence?.agencyName }}
+            </td>
+            <td>
+              <p-tag (click)="toggleStatus(user)" class="hover:cursor-pointer" *ngIf="!user.locked" severity="success" value="Active" />
+              <p-tag (click)="toggleStatus(user)" class="hover:cursor-pointer" *ngIf="user.locked" severity="danger" value="Désactivée" />
+            </td>
+            <td>
+              {{ user?.role?.label }}
+            </td>
+            <td>
+              {{ user?.lastAuthDate | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td>
+              <app-user-form [target]="user" mode="edit" (onDone)="loadUsersList()"></app-user-form>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td style="text-align: center" class="" colspan="7">
+              <div>
+                <img style="margin: auto" ngSrc="assets/icons/empty.png" alt="" height="50" width="50">
+                <h3 class="font-light mt-2">Aucun utilisateur trouvé</h3>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <p-confirmDialog appendTo="body"></p-confirmDialog>
+    <p-toast />
+
+  </div>
+</div>
+

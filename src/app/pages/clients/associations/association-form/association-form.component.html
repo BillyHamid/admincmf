@@ -1,0 +1,124 @@
+<button *ngIf="!forEdit" (click)="showDialog()" pButton type="button" label="Nouvelle association" icon="pi pi-plus" class="p-button-outlined"></button>
+<button style="background-color: #ffae00 !important; border-color: #ffae00" *ngIf="forEdit" (click)="showDialog()" pButton type="button" icon="pi pi-pencil" class="ml-2"></button>
+
+<p-dialog [header]="forEdit ? 'Mise à jour association' : 'Nouvelle association'"
+          [modal]="true"
+          [(visible)]="visible"
+          [style]="{ width: '70%' }"
+          [maximizable]="true">
+  <form [formGroup]="form" (ngSubmit)="submit()" enctype="multipart/form-data" class="p-fluid">
+    <!-- Organisation -->
+    <h4 class="font-semibold mb-3 text-gray-700">Informations générales</h4>
+    <div class="flex gap-4">
+      <div class="field flex-1 mb-4">
+        <label for="agence">Agence de ratachement du client <span class="text-red-600">*</span></label>
+        <div class="card flex flex-1 w-full justify-center">
+          <p-dropdown
+            id="agence"
+            [options]="agences"
+            optionLabel="agencyName"
+            optionValue="uuid"
+            formControlName="agenceId"
+            placeholder="Sélectionnez une agence"
+            [filter]="true"
+            class="adouk-select"
+            appendTo="body"
+          ></p-dropdown>
+        </div>
+
+      </div>
+      <div class="field flex-1 mb-4">
+        <label for="agence">Identifiant SIB <span class="text-red-600">*</span></label>
+        <div class="card flex flex-1 w-full justify-center">
+          <input formControlName="idSib" type="number" class="adouk-input" />
+        </div>
+
+      </div>
+    </div>
+    <div class="grid grid-cols-4 gap-4 mb-4">
+      <div class="field">
+        <label>Nom de l'organisation <span class="text-red-600">*</span></label>
+        <input formControlName="nomOrganisation" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Type <span class="text-red-600">*</span></label>
+        <input formControlName="typeOrganisation" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Domaine d’activité</label>
+        <input formControlName="domaineActivite" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Adresse <span class="text-red-600">*</span></label>
+        <input formControlName="adresse" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Téléphone 1 <span class="text-red-600">*</span></label>
+        <input formControlName="telephone1" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Téléphone 2</label>
+        <input formControlName="telephone2" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input formControlName="email" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Boîte postale</label>
+        <input formControlName="bp" class="adouk-input" />
+      </div>
+    </div>
+
+    <!-- Représentant -->
+    <h4 class="font-semibold mt-4 mb-3 text-gray-700">Représentant légal</h4>
+    <div class="grid grid-cols-3 gap-4 mb-4">
+      <div class="field">
+        <label>Nom <span class="text-red-600">*</span></label>
+        <input formControlName="nomRepresentant" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Prénom <span class="text-red-600">*</span></label>
+        <input formControlName="prenomRepresentant" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Sexe <span class="text-red-600">*</span></label>
+        <p-dropdown [options]="['Masculin', 'Féminin']"
+                    formControlName="sexeRepresentant"
+                    appendTo="body"
+                    class="adouk-select" />
+      </div>
+      <div class="field">
+        <label>Téléphone <span class="text-red-600">*</span></label>
+        <input formControlName="telRepresentant" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input formControlName="emailRepresentant" class="adouk-input" />
+      </div>
+      <div class="field">
+        <label>Adresse</label>
+        <input formControlName="adresseRepresentant" class="adouk-input" />
+      </div>
+    </div>
+
+    <!-- Pièces -->
+    <div *ngIf="!forEdit">
+      <h4 class="font-semibold mt-6 mb-3 text-gray-700">Pièces justificatives</h4>
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="field" *ngFor="let doc of requiredDocs">
+          <label>{{ doc.libelle }} <span class="text-red-600">*</span></label>
+          <input type="file" (change)="onFileChange($event, doc.uuid)" class="adouk-input-file" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons -->
+    <div class="flex justify-end gap-2">
+      <button type="button" pButton label="Fermer" class="p-button-outlined p-button-danger" (click)="resetForm()"></button>
+      <button type="submit" pButton label="Enregistrer" [disabled]="form.invalid || processing" class="p-button-success"></button>
+    </div>
+  </form>
+</p-dialog>
+
+ <p-toast></p-toast>

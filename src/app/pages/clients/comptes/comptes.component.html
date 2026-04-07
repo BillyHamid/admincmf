@@ -1,0 +1,194 @@
+<div class="flex justify-end mb-4">
+  <button (click)="showDialog()" pButton icon="pi pi-plus" class="p-button p-button-sm p-button-rounded p-button-outlined text-[#002855]" label="Nouveau compte"></button>
+</div>
+
+<!-- Loader -->
+<div *ngIf="loading" class="flex flex-col items-center gap-2 mt-8">
+  <p class="text-gray-400 italic text-sm">Chargement en cours...</p>
+  <p-progress-spinner strokeWidth="6" fill="transparent" animationDuration=".5s"
+                      [style]="{ width: '35px', height: '35px' }" />
+</div>
+
+<!-- Liste des comptes -->
+<div class="grid md:grid-cols-2 xl:grid-cols-2 gap-5 " *ngIf="comptes?.length; else noCompte">
+  <div *ngFor="let compte of comptes" class="bg-white border-2 rounded-2xl shadow-sm px-5 py-4 hover:shadow-md transition-all duration-200">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-3">
+      <div>
+        <p class="text-base font-semibold text-[#002855]">{{ compte.libelle }}</p>
+        <p class="text-xs text-gray-500">{{ compte.numeroCompte }}</p>
+      </div>
+      <div class="text-xs text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+        {{ compte.typeCompte }}
+      </div>
+    </div>
+
+    <!-- Mandataires -->
+    <div *ngIf="compte.mandataires?.length; else noMandataires" class="space-y-3">
+      <div *ngFor="let m of compte.mandataires" class="border-l-4 border-[#002855] pl-3 text-sm text-gray-700">
+        <div class="font-medium text-[#002855]">{{ m.nom }} {{ m.prenom }}</div>
+        <div class="text-xs text-gray-500">{{ m.telephone }} — {{ m.email }}</div>
+
+        <div *ngIf="m.piecesJustificatives?.length > 0" class="mt-1 text-xs space-y-1">
+          <div *ngFor="let doc of m.piecesJustificatives">
+            📄 <a [href]="'/fichiers/' + doc.urlFichier" target="_blank" class="underline hover:text-[#002855]">
+            {{ doc.libelle }} ({{ doc.extension }})
+          </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noMandataires>
+      <p class="text-xs italic text-gray-400">Aucun mandataire pour ce compte.</p>
+    </ng-template>
+  </div>
+</div>
+
+<!-- Aucun compte -->
+<ng-template #noCompte>
+  <div class="text-center mt-20 text-gray-400">
+    <img src="assets/icons/empty.png" width="45" height="45" class="mx-auto mb-3" />
+    <p>Aucun compte enregistré pour le moment.</p>
+  </div>
+</ng-template>
+
+
+
+
+<p-dialog
+  appendTo="body"
+  header="Nouveau compte bancaire"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '1000px', maxHeight: '90vh' }"
+  [contentStyle]="{ overflow: 'auto' }"
+>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6 p-4">
+
+    <!-- SECTION : Infos compte -->
+    <div>
+      <h3 class="text-lg font-semibold text-[#002855] mb-3">Informations du compte</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="field">
+          <label>Numéro de compte <span class="text-red-600">*</span></label>
+          <input formControlName="numeroCompte" class="adouk-input w-full" />
+        </div>
+        <div class="field">
+          <label>Libellé du compte <span class="text-red-600">*</span></label>
+          <input formControlName="libelle" class="adouk-input w-full" />
+        </div>
+        <div class="field">
+          <label class="font-medium text-sm">Type de compte <span class="text-red-600">*</span></label>
+          <div class="card flex justify-center">
+            <p-dropdown [filter]="true" appendTo="body" formControlName="typeCompte" optionValue="code" optionLabel="code" [options]="services" class="adouk-select" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION : Mandataires -->
+    <div>
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-lg font-semibold text-[#002855]">Mandataires</h3>
+        <button
+          type="button"
+          (click)="addMandataire()"
+          class="p-button p-button-sm p-button-outlined"
+        >
+          + Ajouter un mandataire
+        </button>
+      </div>
+
+      <div formArrayName="mandataires" *ngIf="mandataires.length > 0" class="space-y-5">
+        <div
+          *ngFor="let mandataire of mandataires.controls; let i = index"
+          [formGroupName]="i"
+          class="border border-gray-200 rounded-lg p-4 bg-white"
+        >
+          <!-- Infos personnelles -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+            <div>
+              <label>Nom <span class="text-red-600">*</span></label>
+              <input formControlName="nom" placeholder="Nom" class="adouk-input w-full" />
+            </div>
+            <div>
+              <label>Prénom <span class="text-red-600">*</span></label>
+              <input formControlName="prenom" placeholder="Prénom" class="adouk-input w-full" />
+            </div>
+            <div class="">
+              <label class="font-medium text-sm">Lien de parenté <span class="text-red-600">*</span></label>
+              <div class="card flex justify-center">
+                <p-dropdown [filter]="true" appendTo="body" formControlName="lienParente" [options]="['Conjoint(e)','Enfant','Parent', 'Néant']" class="adouk-select" />
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 mt-6 md:grid-cols-3 gap-4">
+            <div>
+              <label>Contact <span class="text-red-600">*</span></label>
+              <input formControlName="telephone" placeholder="Téléphone" class="adouk-input w-full" />
+            </div>
+            <div>
+              <label>Email</label>
+              <input formControlName="email" placeholder="Email" class="adouk-input w-full" />
+            </div>
+            <div>
+              <label>Adresse</label>
+              <input formControlName="adresse" placeholder="Adresse" class="adouk-input w-full" />
+            </div>
+          </div>
+
+          <!-- Pièces justificatives -->
+          <div class="mt-6">
+            <h4 class="text-sm font-semibold text-gray-600 mb-4">📎 Pièces justificatives</h4>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div *ngFor="let doc of requiredDocs" class="space-y-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">{{ doc.libelle }}</label>
+                <input
+                  type="file"
+                  class="adouk-input-file"
+                  (change)="onMandataireFileChange($event, i, doc.uuid)"
+                  multiple
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Action suppression -->
+          <div class="flex justify-end mt-4">
+            <button
+              type="button"
+              (click)="removeMandataire(i)"
+              class="p-button p-button-danger p-button-sm"
+            >
+              Supprimer ce mandataire
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
+      <button
+        pButton
+        type="button"
+        class="p-button-outlined p-button-danger"
+        (click)="resetForm()"
+      >
+        Fermer
+      </button>
+      <button
+        pButton
+        type="submit"
+        [loading]="processing"
+        [disabled]="form.invalid"
+        class="p-button"
+      >
+        Enregistrer
+      </button>
+    </div>
+  </form>
+</p-dialog>

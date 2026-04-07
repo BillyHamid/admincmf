@@ -1,0 +1,235 @@
+<div class="flex h-screen w-full">
+  <div class="flex-1 overflow-y-auto p-4">
+    <div class="page-header pl-8 pr-8 pt-4 pb-2 flex justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Nouveau prospect</h1>
+        <p class="font-extralight mt-1">Créer un prospect (personne physique, morale ou association)</p>
+      </div>
+      <a routerLink="/commercial/prospects" class="text-gray-600 hover:text-gray-800">← Retour</a>
+    </div>
+
+    <div class="card shadow-md bg-white border-2 m-8 p-6">
+      <p-tabs [(value)]="activeTab">
+        <p-tablist>
+          <p-tab value="0">Personne physique</p-tab>
+          <p-tab value="1">Personne morale</p-tab>
+          <p-tab value="2">Association</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <!-- physique -->
+          <p-tabpanel value="0">
+            <form [formGroup]="formPhysique" (ngSubmit)="submitPhysique()">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                <div class="field">
+                  <label>Nom <span class="text-red-600">*</span></label>
+                  <input formControlName="nom" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Prénom <span class="text-red-600">*</span></label>
+                  <input formControlName="prenom" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Numéro CNIB <span class="text-red-600">*</span></label>
+                  <input formControlName="numeroCNIB" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Date de naissance <span class="text-red-600">*</span></label>
+                  <input type="date" formControlName="dateNaissance" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Lieu de naissance</label>
+                  <input formControlName="lieuNaissance" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Profession</label>
+                  <input formControlName="profession" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Email <span class="text-red-600">*</span></label>
+                  <input type="email" formControlName="email" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Téléphone <span class="text-red-600">*</span></label>
+                  <input formControlName="telephone1" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Adresse</label>
+                  <input formControlName="adresse" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Employeur</label>
+                  <input formControlName="employeur" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Adresse employeur</label>
+                  <input formControlName="adresseEmployeur" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Boîte postale</label>
+                  <input formControlName="bp" class="adouk-input w-full" />
+                </div>
+              </div>
+              <h4 class="font-semibold mb-2 mt-6 text-gray-700">Pièces justificatives</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="field" *ngFor="let doc of requiredDocsPhysique">
+                  <label>{{ doc.libelle }} <span class="text-red-600">*</span></label>
+                  <input type="file" (change)="onFileChange($event, doc.uuid, 'physique')" class="adouk-input-file w-full" />
+                </div>
+              </div>
+              <div class="flex justify-end">
+                <button pButton type="submit" label="Enregistrer" [loading]="processing" [disabled]="formPhysique.invalid" class="p-button"></button>
+              </div>
+            </form>
+          </p-tabpanel>
+          <!-- moral -->
+          <p-tabpanel value="1">
+            <form [formGroup]="formMoral" (ngSubmit)="submitMoral()">
+              <h4 class="font-semibold mb-2 text-gray-700">Entreprise</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="field">
+                  <label>Raison sociale <span class="text-red-600">*</span></label>
+                  <input formControlName="raisonSociale" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>RCCM</label>
+                  <input formControlName="rccm" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Numéro IFU</label>
+                  <input formControlName="numIfu" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Forme juridique</label>
+                  <input formControlName="formeJuridique" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Domaine d'activité</label>
+                  <input formControlName="domaineActivite" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Adresse</label>
+                  <input formControlName="adresse" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Email <span class="text-red-600">*</span></label>
+                  <input type="email" formControlName="email" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Téléphone <span class="text-red-600">*</span></label>
+                  <input formControlName="telephone1" class="adouk-input w-full" />
+                </div>
+              </div>
+              <h4 class="font-semibold mb-2 mt-6 text-gray-700">Responsable</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="field">
+                  <label>Nom <span class="text-red-600">*</span></label>
+                  <input formControlName="nomResponsable" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Prénom <span class="text-red-600">*</span></label>
+                  <input formControlName="prenomResponsable" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Sexe</label>
+                  <input formControlName="sexeResponsable" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Téléphone <span class="text-red-600">*</span></label>
+                  <input formControlName="telResponsable" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Email <span class="text-red-600">*</span></label>
+                  <input type="email" formControlName="emailResponsable" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Adresse</label>
+                  <input formControlName="adresseResponsable" class="adouk-input w-full" />
+                </div>
+              </div>
+              <h4 class="font-semibold mb-2 mt-6 text-gray-700">Pièces justificatives</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="field" *ngFor="let doc of requiredDocsMoral">
+                  <label>{{ doc.libelle }} <span class="text-red-600">*</span></label>
+                  <input type="file" (change)="onFileChange($event, doc.uuid, 'moral')" class="adouk-input-file w-full" />
+                </div>
+              </div>
+              <div class="flex justify-end">
+                <button pButton type="submit" label="Enregistrer" [loading]="processing" [disabled]="formMoral.invalid" class="p-button"></button>
+              </div>
+            </form>
+          </p-tabpanel>
+          <!-- association -->
+          <p-tabpanel value="2">
+            <form [formGroup]="formAssociation" (ngSubmit)="submitAssociation()">
+              <h4 class="font-semibold mb-2 text-gray-700">Organisation</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="field">
+                  <label>Nom <span class="text-red-600">*</span></label>
+                  <input formControlName="nomOrganisation" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Type</label>
+                  <input formControlName="typeOrganisation" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Domaine d'activité</label>
+                  <input formControlName="domaineActivite" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Adresse</label>
+                  <input formControlName="adresse" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Email <span class="text-red-600">*</span></label>
+                  <input type="email" formControlName="email" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Téléphone <span class="text-red-600">*</span></label>
+                  <input formControlName="telephone1" class="adouk-input w-full" />
+                </div>
+              </div>
+              <h4 class="font-semibold mb-2 mt-6 text-gray-700">Représentant</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div class="field">
+                  <label>Nom <span class="text-red-600">*</span></label>
+                  <input formControlName="nomRepresentant" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Prénom <span class="text-red-600">*</span></label>
+                  <input formControlName="prenomRepresentant" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Sexe</label>
+                  <input formControlName="sexeRepresentant" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Téléphone <span class="text-red-600">*</span></label>
+                  <input formControlName="telRepresentant" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Email <span class="text-red-600">*</span></label>
+                  <input type="email" formControlName="emailRepresentant" class="adouk-input w-full" />
+                </div>
+                <div class="field">
+                  <label>Adresse</label>
+                  <input formControlName="adresseRepresentant" class="adouk-input w-full" />
+                </div>
+              </div>
+              <h4 class="font-semibold mb-2 mt-6 text-gray-700">Pièces justificatives</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="field" *ngFor="let doc of requiredDocsAssociation">
+                  <label>{{ doc.libelle }} <span class="text-red-600">*</span></label>
+                  <input type="file" (change)="onFileChange($event, doc.uuid, 'association')" class="adouk-input-file w-full" />
+                </div>
+              </div>
+              <div class="flex justify-end">
+                <button pButton type="submit" label="Enregistrer" [loading]="processing" [disabled]="formAssociation.invalid" class="p-button"></button>
+              </div>
+            </form>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </div>
+  </div>
+</div>
+<p-toast />

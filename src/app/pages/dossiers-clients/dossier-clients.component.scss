@@ -1,0 +1,14 @@
+.sidebar {
+  width: 20rem;
+  border-right: 1px solid rgba(0, 40, 85, 0.2);
+}
+.containers {
+  display: flex;
+  height: 100vh;
+  background-color: #fafafa;
+}
+.main {
+  flex: 1;
+  overflow-y: auto;
+  background: #fdfdfd;
+}

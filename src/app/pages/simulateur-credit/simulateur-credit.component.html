@@ -1,0 +1,91 @@
+<div class="flex-1 overflow-y-auto p-4">
+  <div class="page-header pl-8 pr-8 pt-4 pb-2">
+    <h1 class="text-2xl font-bold">Simulateur de crédit</h1>
+    <p class="font-extralight mt-1">Estimez vos mensualités et le coût total de votre crédit</p>
+  </div>
+
+  <div class="p-8 max-w-2xl">
+    <div class="bg-white shadow-lg rounded border p-6">
+      <form [formGroup]="form" (ngSubmit)="simuler()">
+        <div class="space-y-4">
+          <div>
+            <label for="montant" class="block text-gray-600 text-sm font-medium mb-1">Montant du crédit (FCFA)</label>
+            <input formControlName="montant" type="number" id="montant" min="10000" step="10000"
+                   class="adouk-input w-full">
+            @if (form.get('montant')?.invalid && form.get('montant')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Minimum 10 000 FCFA</p>
+            }
+          </div>
+
+          <div>
+            <label for="dureeMois" class="block text-gray-600 text-sm font-medium mb-1">Durée (mois)</label>
+            <input formControlName="dureeMois" type="number" id="dureeMois" min="1" max="360" step="1"
+                   class="adouk-input w-full">
+            @if (form.get('dureeMois')?.invalid && form.get('dureeMois')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Entre 1 et 360 mois</p>
+            }
+          </div>
+
+          <div>
+            <label for="tauxAnnuel" class="block text-gray-600 text-sm font-medium mb-1">Taux d'intérêt annuel (%)</label>
+            <input formControlName="tauxAnnuel" type="number" id="tauxAnnuel" min="0.1" max="50" step="0.1"
+                   class="adouk-input w-full">
+            @if (form.get('tauxAnnuel')?.invalid && form.get('tauxAnnuel')?.touched) {
+              <p class="text-red-500 text-xs mt-1">Entre 0.1% et 50%</p>
+            }
+          </div>
+
+          <button pButton type="submit" label="Simuler" icon="pi pi-calculator"
+                  class="mt-4 bg-coris-blue hover:bg-coris-blue-light text-white">
+          </button>
+        </div>
+      </form>
+    </div>
+
+    @if (resultat) {
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white border-l-4 border-coris-blue shadow-lg p-4 rounded">
+          <h3 class="text-gray-600 font-medium text-sm">Mensualité</h3>
+          <p class="text-2xl font-bold text-coris-blue mt-1">{{ formatMontant(resultat.mensualite) }}</p>
+        </div>
+        <div class="bg-white border-l-4 border-coris-red shadow-lg p-4 rounded">
+          <h3 class="text-gray-600 font-medium text-sm">Total intérêts</h3>
+          <p class="text-2xl font-bold text-coris-red mt-1">{{ formatMontant(resultat.totalInterets) }}</p>
+        </div>
+        <div class="bg-white border-l-4 border-gray-700 shadow-lg p-4 rounded">
+          <h3 class="text-gray-600 font-medium text-sm">Total à rembourser</h3>
+          <p class="text-2xl font-bold text-gray-800 mt-1">{{ formatMontant(resultat.totalRembourse) }}</p>
+        </div>
+      </div>
+
+      <div class="mt-8 bg-white shadow-lg rounded border p-6">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Tableau d'amortissement</h3>
+        <h4 class="text-sm text-gray-500 mb-4">Détail des remboursements mois par mois</h4>
+        <div class="overflow-x-auto max-h-96 overflow-y-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-100 sticky top-0">
+              <tr>
+                <th class="text-left p-2">Mois</th>
+                <th class="text-right p-2">Mensualité</th>
+                <th class="text-right p-2">Capital</th>
+                <th class="text-right p-2">Intérêts</th>
+                <th class="text-right p-2">Capital restant</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ligne of tableauAmortissement; track ligne.mois) {
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                  <td class="p-2">{{ ligne.mois }}</td>
+                  <td class="p-2 text-right">{{ formatMontant(ligne.mensualite) }}</td>
+                  <td class="p-2 text-right">{{ formatMontant(ligne.capital) }}</td>
+                  <td class="p-2 text-right">{{ formatMontant(ligne.interets) }}</td>
+                  <td class="p-2 text-right">{{ formatMontant(ligne.capitalRestant) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,148 @@
+<ng-container *ngIf="client">
+  <div class="flex justify-between items-center mb-4">
+    <div class="mb-3 ">
+      <p-tag *ngIf="client?.kycStatus === 'PENDING'" severity="warn" value="Statut : En attente de vérification" />
+      <p-tag *ngIf="client?.kycStatus === 'VALIDE'" severity="success" value="Statut : Validé" />
+      <p-tag *ngIf="client?.kycStatus === 'ACCOUNT_CREATION_PENDING'" severity="warn" value="Statut : En attente de création de compte" />
+    </div>
+    <div *ngIf="client?.kycValidated" class="mb-3 ">
+      <div class="inline-flex items-center gap-2 bg-green-50 text-coris-blue border border-blue-200 px-3 py-1 rounded-full text-sm font-medium shadow-sm">
+        <i class="pi pi-check-circle text-coris-blue text-base"></i>
+        Enregistré ou validé par {{ client?.agentValidateur?.lastname }} {{ client?.agentValidateur?.firstname }}
+      </div>
+      <div style="text-align: end">
+        <span *ngIf="client?.updatedBy !== null" class="text-xs text-end text-muted font-light">
+         Dernière modification par {{ client?.updatedBy }}
+        </span>
+      </div>
+
+    </div>
+  </div>
+  <div class="bg-red-50 rounded-lg p-4 mb-5 border" *ngIf="client?.agenceRattachee">
+    <h4 class="text-lg font-semibold mb-2 text-coris-blue">Gestionnaire du client</h4>
+    <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+      <div><span class="font-bold">Nom et prénom :</span> {{ client.agenceRattachee.gestionnaire?.firstname }} {{ client.agenceRattachee.gestionnaire?.lastname }}</div>
+      <div><span class="font-bold">Agence :</span> {{ client.agenceRattachee.agencyName }}</div>
+    </div>
+
+  </div>
+
+  <!-- 🔁 Bloc dynamique selon type -->
+  <ng-container [ngSwitch]="type">
+
+    <!-- Personne physique -->
+    <ng-container *ngSwitchCase="'physique'">
+      <div class="bg-gray-50 rounded-lg p-4 mb-5 border">
+        <h4 class="text-lg font-semibold mb-3 text-primary">Informations du client</h4>
+        <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+          <div><span class="font-bold">Numéro CNIB :</span> {{ client?.numeroCNIB || 'Non defini' }}</div>
+          <div><span class="font-bold">Nom :</span> {{ client?.nom }}</div>
+          <div><span class="font-bold">Prénom :</span> {{ client?.prenom }}</div>
+          <div><span class="font-bold">Date de naissance :</span> {{ client?.dateNaissance | date:'dd/MM/yyyy' }}</div>
+          <div><span class="font-bold">Lieu de naissance :</span> {{ client?.lieuNaissance }}</div>
+          <div><span class="font-bold">Profession :</span> {{ client?.profession }}</div>
+          <div><span class="font-bold">Employeur :</span> {{ client?.employeur || 'Non defini' }}</div>
+          <div><span class="font-bold">Adresse employeur :</span> {{ client?.adresseEmployeur || 'Non defini' }}</div>
+          <div><span class="font-bold">Email :</span> {{ client?.email }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ client?.telephone1 }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ client?.adresse }}</div>
+          <div><span class="font-bold">Boite postale :</span> {{ client?.bp || 'Non defini' }}</div>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- Personne morale -->
+    <ng-container *ngSwitchCase="'moral'">
+      <div class="bg-gray-50 rounded-lg p-4 mb-5 border">
+        <h4 class="text-lg font-semibold mb-3 text-primary">Informations de l'entreprise</h4>
+        <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+          <div><span class="font-bold">Raison social:</span> {{ client?.raisonSociale || 'Non defini' }}</div>
+          <div><span class="font-bold">RCCM :</span> {{ client?.rccm }}</div>
+          <div><span class="font-bold">IFU :</span> {{ client?.numIfu }}</div>
+          <div><span class="font-bold">Forme juridique :</span> {{ client?.formeJuridique }}</div>
+          <div><span class="font-bold">Domaine d'activité :</span> {{ client?.domaineActivite || 'Non defini' }}</div>
+          <div><span class="font-bold">Boite postale :</span> {{ client?.bp }}</div>
+          <div><span class="font-bold">Email :</span> {{ client?.email }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ client?.telephone1 }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ client?.adresse }}</div>
+          <div><span class="font-bold">Boite postale :</span> {{ client?.bp || 'Non defini' }}</div>
+        </div>
+
+        <div class="flex items-center justify-between mt-6">
+          <h4 class="text-lg font-normal mb-3 text-primary">Informations du gérant</h4>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+          <div><span class="font-bold">Nom :</span> {{ client?.nomResponsable }}</div>
+          <div><span class="font-bold">Prénom :</span> {{ client?.prenomResponsable }}</div>
+          <div><span class="font-bold">Sexe :</span> {{ client?.sexeResponsable }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ client?.adresseResponsable || 'Non defini' }}</div>
+          <div><span class="font-bold">Email :</span> {{ client?.emailResponsable || 'Non defini' }}</div>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- Association -->
+    <ng-container *ngSwitchCase="'association'">
+      <div class="bg-gray-50 rounded-lg p-4 mb-5 border">
+        <h4 class="text-lg font-semibold mb-3 text-primary">Informations de l'organisation</h4>
+        <div class="grid grid-cols-2 gap-3 text-sm text-gray-700">
+          <div><span class="font-bold">Nom :</span> {{ client?.nomOrganisation }}</div>
+          <div><span class="font-bold">Type :</span> {{ client?.typeOrganisation }}</div>
+          <div><span class="font-bold">Domaine :</span> {{ client?.domaineActivite || 'Non défini' }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ client?.telephone1 }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ client?.adresse }}</div>
+          <div><span class="font-bold">Email :</span> {{ client?.email }}</div>
+          <div><span class="font-bold">BP :</span> {{ client?.bp || 'Non défini' }}</div>
+        </div>
+
+        <h4 class="text-lg font-normal mt-6 text-primary">Représentant légal</h4>
+        <div class="grid grid-cols-2 gap-3 text-sm text-gray-700 mt-2">
+          <div><span class="font-bold">Nom :</span> {{ client?.nomRepresentant }}</div>
+          <div><span class="font-bold">Prénom :</span> {{ client?.prenomRepresentant }}</div>
+          <div><span class="font-bold">Sexe :</span> {{ client?.sexeRepresentant }}</div>
+          <div><span class="font-bold">Téléphone :</span> {{ client?.telRepresentant }}</div>
+          <div><span class="font-bold">Email :</span> {{ client?.emailRepresentant || 'Non défini' }}</div>
+          <div><span class="font-bold">Adresse :</span> {{ client?.adresseRepresentant || 'Non défini' }}</div>
+        </div>
+      </div>
+    </ng-container>
+
+  </ng-container>
+
+  <!-- 📎 Pièces -->
+  <h4 class="mb-2 font-semibold">Pièces justificatives</h4>
+  <div class="grid grid-cols-1 gap-3">
+    <div
+      *ngFor="let piece of clientPieces"
+      class="flex items-center justify-between bg-gray-50 p-3 border rounded hover:shadow transition"
+    >
+      <div class="flex items-center gap-4">
+        <ng-container [ngSwitch]="getFileExtension(piece.urlFichier)">
+          <i *ngSwitchCase="'pdf'" class="pi pi-file-pdf text-red-500 text-3xl"></i>
+          <i *ngSwitchDefault class="pi pi-image text-coris-blue text-3xl"></i>
+        </ng-container>
+        <div>
+          <div class="font-medium text-gray-800">{{ piece.libelle }}</div>
+          <div class="text-xs text-gray-500">{{ piece.dateEnregistrement | date:'dd/MM/yyyy HH:mm' }}</div>
+        </div>
+      </div>
+      <button
+        pButton
+        icon="pi pi-eye"
+        class="p-button-text p-button-sm text-primary"
+        (click)="visualiserPiece(piece.urlFichier)"
+      ></button>
+    </div>
+  </div>
+
+  <div *ngIf="pieceLoading">
+    <p class="text-gray-400 italic text-center mt-4">Chargement des pièces justificatives...</p>
+    <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+  </div>
+  <div *ngIf="!pieceLoading && clientPieces?.length === 0" class="text-gray-400 italic text-center">Aucune pièce justificative disponible.</div>
+</ng-container>
+<div *ngIf="fileLoading" class="overlay-loader">
+  <div class="spinner"></div>
+</div>

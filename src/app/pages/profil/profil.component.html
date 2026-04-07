@@ -1,0 +1,41 @@
+<div class="p-6 max-w-4xl mx-auto space-y-8">
+  <h2 class="text-2xl font-bold text-coris-blue">Mon profil</h2>
+
+  <div *ngIf="user !== null" class="grid md:grid-cols-2 gap-6 bg-white rounded-xl shadow-md p-6">
+    <div>
+      <p class="mb-2"><strong>Nom:</strong> {{ user?.agent?.lastname }}</p>
+      <p class="mb-2"><strong>Prénom:</strong> {{ user?.agent?.firstname }}</p>
+      <p class="mb-2"><strong>Email:</strong> {{ user?.agent?.email }}</p>
+      <p class="mb-2"><strong>Téléphone:</strong> {{ user?.agent?.phone }}</p>
+    </div>
+    <div>
+      <p class="mb-2"><strong>Rôle:</strong> {{ user?.role?.label }}</p>
+      <p class="mb-2"><strong>Agence:</strong> {{ user?.agent?.agence?.agencyName }}</p>
+      <p class="mb-2"><strong>Adresse:</strong> {{ user?.agent?.agence?.agencyAdress }}</p>
+      <p class="mb-2"><strong>Téléphone agence:</strong> {{ user?.agent?.agence?.agencyPhone1 }}</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-md p-6">
+    <h3 class="text-xl font-semibold mb-4 text-coris-blue">Modifier le mot de passe</h3>
+    <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" class="grid gap-4">
+
+      <div class="flex flex-col">
+        <label class="mb-1">Mot de passe actuel</label>
+        <input type="password" pInputText formControlName="currentPassword" class="p-inputtext w-full"/>
+      </div>
+
+      <div class="flex flex-col">
+        <label class="mb-1">Nouveau mot de passe</label>
+        <input type="password" pInputText formControlName="newPassword" class="p-inputtext w-full"/>
+      </div>
+
+      <div class="flex flex-col">
+        <label class="mb-1">Confirmer le nouveau mot de passe</label>
+        <input type="password" pInputText formControlName="confirmPassword" class="p-inputtext w-full"/>
+      </div>
+
+      <button type="submit" pButton label="Mettre à jour" class="w-max bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"></button>
+    </form>
+  </div>
+</div>

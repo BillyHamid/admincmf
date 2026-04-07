@@ -1,0 +1,75 @@
+<button
+  (click)="showDialog()"
+  pButton
+  type="button"
+  label="Nouvelle notification"
+  icon="pi pi-bell"
+  class="p-button-outlined mb-3">
+</button>
+
+<p-dialog
+  header="Nouvelle notification"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '45%' }"
+  [closable]="true"
+  class="adouk-dialog"
+>
+  <form [formGroup]="notificationForm" (ngSubmit)="saveForm()" class="p-fluid">
+
+    <!-- Titre -->
+    <div class="flex gap-4">
+      <div class="formgrid grid mb-2 flex-1">
+        <div class="field col-12">
+          <label for="titre" class="adouk-label">Titre <span class="text-red-600">*</span></label>
+          <input id="titre" formControlName="titre" type="text" class="adouk-input" pInputText />
+        </div>
+      </div>
+      <div class="formgrid grid flex-1">
+        <div class="field col-12">
+          <label for="cible" class="adouk-label">Cible <span class="text-red-600">*</span></label>
+          <select id="cible" formControlName="cible" class="adouk-input">
+            <option value="TOUS">Tous les clients</option>
+            <option value="CLIENT_PHYSIQUE">Clients physique seulement</option>
+            <option value="CLIENT_MORALE">Clients entreprise seulement</option>
+            <option value="CLIENT_ASSOCIATION">Clients association seulement</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message -->
+    <div class="formgrid grid mb-2">
+      <div class="field col-12">
+        <label for="message" class="adouk-label">Message <span class="text-red-600">*</span></label>
+        <textarea formControlName="message" id="message" rows="2" class="adouk-input"></textarea>
+      </div>
+    </div>
+
+    <!-- Cible -->
+
+
+    <!-- Boutons -->
+    <div class="flex justify-end mt-4 gap-2">
+      <button
+        type="button"
+        pButton
+        label="Fermer"
+        class="p-button-danger"
+        (click)="visible = false">
+      </button>
+
+      <button
+        type="submit"
+        pButton
+        label="Envoyer"
+        class="p-button-primary"
+        [disabled]="notificationForm.invalid"
+        [loading]="processing">
+      </button>
+    </div>
+
+  </form>
+</p-dialog>
+
+<p-toast></p-toast>

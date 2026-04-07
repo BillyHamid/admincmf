@@ -1,0 +1,173 @@
+<div class="flex h-screen w-full">
+  <div class="flex-1 overflow-y-auto p-4">
+    <!-- Header -->
+    <div class="page-header pl-8 pr-8 pt-4 pb-2 flex justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Demandes de rélevés</h1>
+        <p class="font-extralight mt-1">
+          Liste des demandes de rélevés effectuées par les clients
+        </p>
+      </div>
+    </div>
+
+    <div class="flex gap-4 pl-8 pr-8 mb-2 mt-2">
+      <div class="field flex-1">
+        <label for="">Statut</label>
+        <div class="card flex ">
+          <p-dropdown
+            [options]="statutOptions"
+            optionLabel="label"
+            optionValue="value"
+            [(ngModel)]="selectedStatut"
+            placeholder="Filtrer par statut"
+            class="w-64 adouk-select">
+          </p-dropdown>
+        </div>
+      </div>
+      <div class="field flex-1">
+        <label for="">Numéro de compte</label>
+        <div class="card flex ">
+          <input [(ngModel)]="selectedClientId" id="agencyLatitude" type="text" class="adouk-input"/>
+        </div>
+      </div>
+      <div class="mt-7">
+        <p-button [loading]="processing" label="Rechercher" (click)="loadRequests()" />
+      </div>
+      <div class="mt-7">
+        <button class="p-button-md p-button-outlined" pButton (click)="loadRequests()">Vider la recherche</button>
+      </div>
+
+
+
+    </div>
+
+
+    <!-- Table -->
+    <div class="card shadow-md bg-white border-2 m-8 p-3">
+      <p-table
+        [paginator]="true"
+        [rows]="rows"
+        [totalRecords]="totalRecords"
+        [lazy]="true"
+        (onLazyLoad)="onPageChange($event)"
+        [loading]="loading"
+        [value]="campagnes"
+        [tableStyle]="{ 'min-width': '50rem' }">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date soumission</th>
+            <th>Client</th>
+<!--            <th>Message</th>-->
+            <th>Numéro de compte</th>
+            <th>Intervalle souhaité</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-notification>
+          <tr>
+            <td>
+              {{ notification.dateSoumission | date: 'dd/MM/YYYY HH:mm' }}
+            </td>
+            <td class="sflex">
+              <div>
+                <p class="font-bold">
+                  {{
+                    notification.compteBancaire?.client?.nomOrganisation ||
+                    notification.compteBancaire?.client?.raisonSocial ||
+                    (notification.compteBancaire?.client?.nom + ' ' + notification.compteBancaire?.client?.prenom)
+                  }}
+                </p>
+                <p class="text-sm italic">{{ notification.compteBancaire?.client?.telephone1 }}</p>
+              </div>
+            </td>
+            <td>{{ notification.compteBancaire?.numeroCompte }}</td>
+            <td>
+              {{ notification.intervalleDebut | date: 'dd/MM/YYYY' }} - {{ notification.intervalleFin | date: 'dd/MM/YYYY' }}
+            </td>
+            <td>
+              <div *ngIf="notification.statut === 'VALIDE'">
+                <p-tag
+
+                  severity="success"
+                  [value]="'Envoyée le ' + (notification.dateReception | date: 'dd/MM/YYYY HH:mm')">
+                </p-tag>
+                <p class="text-sm italic light ml-1 mt-1">Par : {{ notification?.deliveredBy?.agent?.firstname }} {{ notification?.deliveredBy?.agent?.lastname }}</p>
+              </div>
+
+              <div *ngIf="notification.statut === 'REJECTED'">
+                <p-tag
+
+                  severity="danger"
+                  [value]="'Rejetté le ' + (notification.dateRejet | date: 'dd/MM/YYYY HH:mm')">
+                </p-tag>
+                <p class="text-sm italic light ml-1 mt-1">Par : {{ notification?.deliveredBy?.agent?.firstname }} {{ notification?.deliveredBy?.agent?.lastname }}</p>
+                <p class="text-sm italic light ml-1 mt-1">Raison : {{ notification?.commentaire }}</p>
+              </div>
+
+              <p-tag
+                *ngIf="notification.statut === 'EN_ATTENTE'"
+                severity="warn"
+                value="En attente">
+              </p-tag>
+            </td>
+            <td>
+              <button *ngIf="notification?.statut === 'VALIDE'" pButton icon="pi pi-eye" class="p-button-text p-button-success" (click)="visualiserPiece(notification?.fichierReleve)"></button>
+              <button *ngIf="notification?.statut !== 'VALIDE' && notification?.statut !== 'REJECTED'" pButton icon="pi pi-check" class="p-button-text p-button-success" (click)="openDialog(notification)"></button>
+              <button *ngIf="notification?.statut !== 'VALIDE' && notification?.statut !== 'REJECTED'" pButton icon="pi pi-times" class="p-button-text p-button-danger" (click)="openRejetDialog(notification)"></button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center">
+              <div>
+                <img src="assets/icons/empty.png" alt="Aucune donnée" height="50" />
+                <h3 class="font-light mt-2">Aucune demande trouvée</h3>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <p-toast />
+    <p-confirmDialog appendTo="body"></p-confirmDialog>
+  </div>
+</div>
+
+
+<p-dialog header="Envoi de rélevé" [modal]="true" [(visible)]="visible" [style]="{ width: '40%' }">
+  <div class="flex gap-4">
+    <div class="field flex-1 gap-4 mb-4">
+      <label for="releveFile">Rélevé <span class="text-red-700">*</span></label>
+      <input accept="application/pdf" type="file" id="releveFile" (change)="onFileSelected($event)" class="adouk-input" />
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <p-button label="Fermer" severity="danger" (click)="visible = false" />
+    <p-button [loading]="processing" label="Enregistrer" (click)="saveForm()" />
+  </div>
+</p-dialog>
+
+<p-dialog header="Rejet de rélevé" [modal]="true" [(visible)]="rejetVisible" [style]="{ width: '40%' }">
+  <div class="flex gap-4">
+    <div class="field flex-1 gap-4 mb-4">
+      <label for="releveFile">Votre commentaire <span class="text-red-700">*</span></label>
+      <textarea [(ngModel)]="rejetCommentaire" id="descriptionService" rows="5" class="adouk-input"></textarea>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <p-button label="Fermer" severity="danger" (click)="visible = false" />
+    <p-button [disabled]="rejetCommentaire === ''" [loading]="processing" label="Enregistrer" (click)="saveRejetForm()" />
+  </div>
+</p-dialog>
+
+<div *ngIf="fileLoading" class="overlay-loader">
+  <div class="spinner"></div>
+</div>

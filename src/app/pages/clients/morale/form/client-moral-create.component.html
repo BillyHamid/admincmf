@@ -1,0 +1,130 @@
+<button  *ngIf="!forEdit" (click)="showDialog()" pButton type="button" label="Nouveau client" icon="pi pi-plus" class="p-button-outlined"></button>
+<button style="background-color: #ffae00 !important; border-color: #ffae00" *ngIf="forEdit" (click)="showDialog()" pButton type="button" icon="pi pi-pencil" class="ml-2"></button>
+
+<div class="card flex justify-center">
+  <p-dialog [header]="forEdit ? 'Mise à jour client' : 'Nouveau client'" [maximizable]="true" [modal]="true" [(visible)]="visible" [style]="{ width: '70%' }">
+    <div class="card bg-white p-3 rounded-md max-w-5xl mx-auto">
+      <form [formGroup]="form" (ngSubmit)="submit()" enctype="multipart/form-data">
+        <!-- 📛 Infos entreprise -->
+        <div class="flex gap-4">
+          <div class="field flex-1 mb-4">
+            <label for="agence">Agence de ratachement du client <span class="text-red-600">*</span></label>
+            <div class="card flex flex-1 w-full justify-center">
+              <p-dropdown
+                id="agence"
+                [options]="agences"
+                optionLabel="agencyName"
+                optionValue="uuid"
+                formControlName="agenceId"
+                placeholder="Sélectionnez une agence"
+                [filter]="true"
+                class="adouk-select"
+                appendTo="body"
+              ></p-dropdown>
+            </div>
+          </div>
+          <div class="field flex-1 mb-4">
+            <label for="agence">Identifiant SIB <span class="text-red-600">*</span></label>
+            <div class="card flex flex-1 w-full justify-center">
+              <input formControlName="idSib" type="number" class="adouk-input" />
+            </div>
+
+          </div>
+        </div>
+        <div class="grid grid-cols-4 gap-4 mb-4">
+          <div class="field">
+            <label class="font-medium text-sm">Raison sociale <span class="text-red-600">*</span></label>
+            <input formControlName="raisonSociale" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">RCCM <span class="text-red-600">*</span></label>
+            <input formControlName="rccm" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Numéro IFU <span class="text-red-600">*</span></label>
+            <input formControlName="numIfu" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Forme juridique <span class="text-red-600">*</span></label>
+            <div class="card flex justify-center">
+              <p-dropdown [filter]="true" appendTo="body" formControlName="formeJuridique" [options]="['SARL','SAS','SA','SNC','EURL','SCS']" class="adouk-select" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Domaine d’activité</label>
+            <input formControlName="domaineActivite" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Adresse <span class="text-red-600">*</span></label>
+            <input formControlName="adresse" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Contact <span class="text-red-600">*</span></label>
+            <input formControlName="telephone1" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Boite postale</label>
+            <input formControlName="bp" class="adouk-input" />
+          </div>
+
+        </div>
+
+        <!-- 👤 Responsable légal -->
+        <h4 class="text-md font-semibold mt-6 mb-2">Responsable légal</h4>
+        <div class="grid grid-cols-3 gap-4 mb-4">
+          <div class="field">
+            <label class="font-medium text-sm">Nom <span class="text-red-600">*</span></label>
+            <input formControlName="nomResponsable" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Prénom <span class="text-red-600">*</span></label>
+            <input formControlName="prenomResponsable" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Sexe <span class="text-red-600">*</span></label>
+            <div class="card flex justify-center">
+              <p-dropdown [filter]="true" appendTo="body" formControlName="sexeResponsable" [options]="['Masculin','Féminin']" class="adouk-select" />
+            </div>
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Téléphone <span class="text-red-600">*</span></label>
+            <input formControlName="telResponsable" type="tel" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Email</label>
+            <input formControlName="emailResponsable" class="adouk-input" />
+          </div>
+          <div class="field">
+            <label class="font-medium text-sm">Adresse</label>
+            <input formControlName="adresseResponsable" class="adouk-input" />
+          </div>
+        </div>
+
+        <!-- 📎 Fichiers -->
+       <div *ngIf="!forEdit">
+         <h4 class="text-md font-semibold mt-6 mb-2">Pièces justificatives</h4>
+         <div class="grid grid-cols-3 gap-4 mb-4">
+           <div class="field" *ngFor="let doc of requiredDocs">
+             <label class="font-medium text-sm">
+               {{ doc.libelle }} <span class="text-red-600">*</span>
+             </label>
+             <input type="file" (change)="onFileChange($event, doc.uuid)" class="adouk-input-file" />
+           </div>
+         </div>
+       </div>
+
+
+        <!-- ✅ Boutons -->
+        <div class="flex justify-end gap-2 mt-4">
+          <button type="button" pButton label="Fermer" class="p-button-outlined p-button-danger" (click)="resetForm()"></button>
+          <button type="submit" pButton label="Enregistrer" class="p-button-success" [disabled]="form.invalid || processing"></button>
+        </div>
+      </form>
+
+      <p-toast />
+    </div>
+
+
+  </p-dialog>
+</div>
+<p-toast />

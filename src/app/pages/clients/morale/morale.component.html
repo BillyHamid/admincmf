@@ -1,0 +1,188 @@
+<div class="card shadow-sm bg-white">
+  <div class="flex justify-between items-start gap-4 mb-3">
+    <!-- Bloc Filtres -->
+    <div class="flex-1 p-4">
+      <p-panel
+        [toggleable]="true"
+        [collapsed]="!toggleFilters"
+        header="Filtres de recherche"
+        styleClass="shadow-none border border-gray-200 rounded-md"
+      >
+        <div class="grid grid-cols-3 gap-4 p-2">
+          <div style="margin-top: -5px; margin-left: -8px">
+            <label class="text-sm font-medium mb-1 block">Libellé</label>
+            <input [(ngModel)]="filters.search" placeholder="Rechercher..."
+                   type="text" class="adouk-input w-full" />
+          </div>
+
+          <!-- Statut -->
+          <div style="margin-top: -10px">
+            <label class="text-sm font-medium mb-1 block">Statut</label>
+            <p-dropdown
+              [options]="statusOptions"
+              [(ngModel)]="filters.status"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Tous"
+              class="adouk-select w-full"
+            />
+          </div>
+
+          <!-- Actions -->
+          <div  class="flex items-end justify-end gap-2">
+            <button
+              style="margin-top: -10px"
+              pButton
+              type="button"
+              icon="pi pi-filter-slash"
+              label="Réinitialiser"
+              class="p-button-md p-button-danger text-gray-700 border-gray-300"
+              (click)="resetFiltrer()"
+            ></button>
+
+            <button
+              pButton
+              style="margin-top: -20px"
+              type="button"
+              icon="pi pi-filter"
+              label="Rechercher"
+              class="p-button-md p-button-outlined text-gray-700 border-gray-300"
+              (click)="filtrer()"
+            ></button>
+          </div>
+        </div>
+      </p-panel>
+    </div>
+
+    <!-- Bouton créer -->
+    <div class="flex-shrink-0">
+      <app-client-moral-create [forEdit]="false" (onUpdate)="loadAgenceList(0,10)"></app-client-moral-create>
+    </div>
+  </div>
+  <div class="card shadow-md bg-white border-2 p-3">
+    <p-table
+      [value]="clients"
+      [lazy]="true"
+      (onLazyLoad)="loadClientsLazy($event)"
+      [paginator]="true"
+      [rows]="10"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      [tableStyle]="{ 'min-width': '50rem' }"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>ID</th>
+          <th>Raison social</th>
+          <th>Forme juridique</th>
+          <th>RCCM</th>
+          <th>IFU</th>
+          <th>Agence de ratachement</th>
+<!--          <th>Compte ?</th>-->
+<!--          <th>Statut KYC</th>-->
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-client>
+        <tr>
+          <td>
+            {{client?.idSib}}
+          </td>
+          <td>
+            {{ client?.raisonSociale }}
+          </td>
+          <td>
+            {{ client?.formeJuridique }}
+          </td>
+          <td>{{ client.rccm }}</td>
+          <td>{{ client?.numIfu }}</td>
+          <td>
+<!--            <p>{{ client?.agenceRattachee?.gestionnaire?.firstname}} {{ client?.agenceRattachee?.gestionnaire?.lastname }}</p>-->
+            <p class="text-muted font-light text-gray-500">{{ client?.agenceRattachee?.agencyName }}</p>
+          </td>
+<!--          <td>-->
+<!--            <p-tag *ngIf="client?.kycStatus === 'PENDING'" severity="warn" value="En attente de vérification" />-->
+<!--            <p-tag *ngIf="client?.kycStatus === 'ACCOUNT_CREATION_PENDING'" severity="info" value="En attende de création de compte" />-->
+<!--            <p-tag *ngIf="client?.kycStatus === 'VALIDE'" severity="success" value="Validé" />-->
+<!--          </td>-->
+<!--          <td class="" style="width: 50px;">-->
+<!--            <p-tag *ngIf="client?.hasMobileAccess" severity="success" value="Oui"></p-tag>-->
+
+<!--            <ng-container *ngIf="!client?.hasMobileAccess">-->
+<!--              <p-tag severity="danger" value="Non"></p-tag>-->
+<!--&lt;!&ndash;              <button&ndash;&gt;-->
+<!--&lt;!&ndash;                pButton&ndash;&gt;-->
+<!--&lt;!&ndash;                type="button"&ndash;&gt;-->
+<!--&lt;!&ndash;                icon="pi pi-check"&ndash;&gt;-->
+<!--&lt;!&ndash;                class="p-button-text p-button-sm text-green-600"&ndash;&gt;-->
+<!--&lt;!&ndash;                (click)="handleActiveMobile(client.id)"&ndash;&gt;-->
+<!--&lt;!&ndash;                title="Activer"&ndash;&gt;-->
+<!--&lt;!&ndash;              ></button>&ndash;&gt;-->
+<!--            </ng-container>-->
+<!--          </td>-->
+          <td style="width: 150px; display: flex; flex-direction: row">
+            <button (click)="showClientDetails(client)" pButton severity="primary" icon="pi pi-eye" class="p-button" type="button"></button>
+            <app-client-moral-create [clientToEdit]="client"  [forEdit]="true" (onUpdate)="loadAgenceList(0,10)"></app-client-moral-create>
+            <button (click)="handleDelete(client.id)" pButton severity="danger" icon="pi pi-trash" class="p-button ml-2" type="button"></button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center">
+            <div class="flex flex-col items-center">
+              <img ngSrc="assets/icons/empty.png" alt="empty" height="50" width="50">
+              <h3 class="font-light mt-2">Aucun client trouvé</h3>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+  </div>
+
+</div>
+<p-confirmDialog appendTo="body"></p-confirmDialog>
+<p-toast />
+
+<p-drawer
+  header="Détails du client"
+  position="right"
+  [(visible)]="displayClientDetails"
+  styleClass="!w-[50em] p-4"
+>
+  <p-tabs value="0">
+    <p-tablist>
+      <p-tab value="0">KYC du client</p-tab>
+      <p-tab value="1">Comptes du client</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="0">
+        <app-client-details
+          [client]="currentClient"
+          [type]="'moral'"
+          [loading]="pieceLoading"
+        ></app-client-details>
+
+      </p-tabpanel>
+      <p-tabpanel value="1">
+        <app-comptes *ngIf="currentClient" [clientId]="currentClient?.id"></app-comptes>
+
+
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+  <!-- ✅ Section Infos Client -->
+
+
+  <ng-template #noPieces>
+    <p class="text-gray-400 italic text-center mt-4">Aucune pièce justificative disponible.</p>
+  </ng-template>
+</p-drawer>
+
+<div *ngIf="fileLoading" class="overlay-loader">
+  <div class="spinner"></div>
+</div>
+

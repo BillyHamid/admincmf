@@ -1,0 +1,39 @@
+<div class="flex items-center justify-center min-h-screen overflow-hidden bg-coris-blue">
+  <div class="flex flex-col items-center w-full z-10 p-4">
+    <div style="width: 100%; max-width: 700px;" class="rounded-lg flex shadow-2xl overflow-hidden">
+      <div class="flex-1 p-8 border-r-4 border-coris-red" style="background-color: rgba(0, 40, 85, 0.95);">
+        <div class="flex items-center gap-4">
+          <img src="assets/logos/coris-meso-finance.png" alt="CORIS MESO FINANCE" class="h-24" />
+          <div>
+            <p class="text-white text-lg font-bold">CORIS MESO FINANCE</p>
+            <p class="text-white/90 text-sm font-light">Réinitialisation du mot de passe</p>
+          </div>
+        </div>
+        <hr class="mt-4 border-coris-red/50">
+        <div class="mt-10">
+          <p class="text-3xl font-bold text-white">Modifier votre <br><span class="text-coris-red">mot de passe</span></p>
+        </div>
+      </div>
+      <div class="bg-white p-9" style="width: 380px">
+        <p class="font-semibold mb-4 text-coris-blue">Modifier votre mot de passe</p>
+        <form [formGroup]="authForm" (ngSubmit)="handleLogin()">
+          <div class="mb-4">
+            <label for="cuid" class="block text-gray-600 text-sm font-medium">Adresse email</label>
+            <input formControlName="username" type="text" id="cuid" required
+                   class="mt-1 block w-full p-2 border bg-gray-50 focus:outline-none focus:ring-2 focus:ring-coris-blue transition duration-200">
+          </div>
+          <button pButton [loading]="processing" type="submit"
+                  class="w-full bg-coris-red text-white py-3 hover:bg-coris-red-dark transition duration-200">
+            Modifier
+          </button>
+        </form>
+        <p class="mt-4 text-center text-gray-600">
+          <a href="/auth/login" class="text-coris-blue hover:underline font-medium">Retour à la connexion</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast />
+

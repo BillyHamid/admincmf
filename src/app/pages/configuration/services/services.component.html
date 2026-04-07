@@ -1,0 +1,51 @@
+<div class="flex h-screen w-full">
+  <div class="flex-1 overflow-y-auto p-4">
+    <div class="page-header pl-8 pr-8 pt-4 pb-2 flex justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">Services de la FINACOM</h1>
+        <p class="font-extralight mt-1">Liste des services</p>
+      </div>
+      <div class="mt-4">
+        <app-service-form [forEdit]="false" (onDone)="loadFaqList()"> </app-service-form>
+      </div>
+    </div>
+
+    <div class="card shadow-md bg-white border-2 m-8 p-3">
+      <p-table [paginator]="true" [loading]="loading" [rows]="10" [value]="faqList" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template #header>
+          <tr>
+            <th>Code</th>
+            <th>Libellé</th>
+            <th>Description</th>
+            <th>Créé par</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-faq>
+          <tr>
+            <td>{{ faq.code }}</td>
+            <td>{{ faq.libelleService }}</td>
+            <td>{{ faq.descriptionService }}</td>
+            <td>{{ faq.createdBy }}</td>
+            <td class="flex gap-2">
+              <app-service-form [forEdit]="true" [target]="faq" (onDone)="loadFaqList()"> </app-service-form>
+              <button (click)="handleDelete(faq)" pButton severity="danger" type="button" icon="pi pi-trash" class="p-button"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="text-center">
+              <div class="text-center mt-4 mb-2">
+                <img style="margin: auto" ngSrc="assets/icons/empty.png" alt="" height="50" width="50">
+                <h3 class="font-light mt-2">Aucune FAQ trouvée</h3>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <p-confirmDialog appendTo="body"></p-confirmDialog>
+    <p-toast />
+  </div>
+</div>

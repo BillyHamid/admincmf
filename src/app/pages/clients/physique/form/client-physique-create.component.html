@@ -1,0 +1,128 @@
+<button *ngIf="!forEdit" (click)="showDialog()" pButton type="button" label="Nouveau client" icon="pi pi-plus" class="m-5 p-button-outlined"></button>
+<button style="background-color: #ffae00 !important; border-color: #ffae00" *ngIf="forEdit" (click)="showDialog()" pButton type="button" icon="pi pi-pencil" class="ml-2"></button>
+<div class="card flex justify-center">
+  <p-dialog [header]="forEdit ? 'Mise à jour client' : 'Nouveau client'" [modal]="true" [(visible)]="visible" [style]="{ width: '950px' }">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- 🧍 Infos personnelles -->
+      <div class="flex gap-4">
+        <div class="field flex-1 mb-4">
+          <label for="agence">Agence de ratachement du client <span class="text-red-600">*</span></label>
+          <div class="card flex flex-1 w-full justify-center">
+            <p-dropdown
+              id="agence"
+              [options]="agences"
+              optionLabel="agencyName"
+              optionValue="uuid"
+              formControlName="agenceId"
+              placeholder="Sélectionnez une agence"
+              [filter]="true"
+              class="adouk-select"
+              appendTo="body"
+            ></p-dropdown>
+          </div>
+
+        </div>
+        <div class="field flex-1 mb-4">
+          <label for="agence">Identifiant SIB <span class="text-red-600">*</span></label>
+          <div class="card flex flex-1 w-full justify-center">
+            <input formControlName="idSib" type="number" class="adouk-input" />
+          </div>
+
+        </div>
+      </div>
+      <div class="flex gap-4 mb-4">
+        <div class="field flex-1">
+          <label for="nom">Nom <span class="text-red-600">*</span></label>
+          <input id="nom" formControlName="nom" class="adouk-input" />
+        </div>
+        <div class="field flex-1">
+          <label for="prenom">Prénom <span class="text-red-600">*</span></label>
+          <input id="prenom" formControlName="prenom" class="adouk-input" />
+        </div>
+        <div class="field flex-1">
+          <label for="numeroCNIB">Numéro CNIB <span class="text-red-600">*</span></label>
+          <input id="numeroCNIB" formControlName="numeroCNIB" class="adouk-input" />
+        </div>
+
+      </div>
+
+      <div class="flex gap-4 mb-4">
+        <div class="field flex-1">
+          <label for="dateNaissance">Date de naissance <span class="text-red-600">*</span></label>
+          <input type="date" id="dateNaissance" formControlName="dateNaissance" class="adouk-input" />
+        </div>
+        <div class="field flex-1">
+          <label for="lieuNaissance">Lieu de naissance</label>
+          <input id="lieuNaissance" formControlName="lieuNaissance" class="adouk-input" />
+        </div>
+        <div class="field flex-1">
+          <label for="adresse">Adresse</label>
+          <input id="adresse" formControlName="adresse" class="adouk-input" />
+        </div>
+      </div>
+
+      <div class="flex gap-4 mb-4">
+        <div class="field flex-1">
+          <label for="profession">Profession</label>
+          <input id="profession" formControlName="profession" class="adouk-input" />
+        </div>
+        <div class="field flex-1">
+          <label for="employeur">Employeur</label>
+          <input id="employeur" formControlName="profession" class="adouk-input" />
+        </div>
+        <div class="field flex-1">
+          <label for="adresseEmployeur">Adresse employeur</label>
+          <input id="adresseEmployeur" formControlName="adresse" class="adouk-input" />
+        </div>
+      </div>
+
+      <div class="flex gap-4 mb-4">
+
+
+      </div>
+
+      <!-- 📞 Contact -->
+      <div class="flex gap-4 mb-4">
+        <div class="field flex-1">
+          <label for="email">Email <span class="text-red-600">*</span></label>
+          <input type="email" id="email" formControlName="email" class="adouk-input" />
+        </div>
+        <div class="field flex-1">
+          <label for="telephone1">Téléphone <span class="text-red-600">*</span></label>
+          <input id="telephone1" formControlName="telephone1" class="adouk-input" />
+        </div>
+        <div class="field flex-1">
+          <label for="bp">Boite postale </label>
+          <input id="bp" formControlName="bp" class="adouk-input" />
+        </div>
+      </div>
+
+
+      <!-- 📎 Fichiers justificatifs -->
+     <div *ngIf="!forEdit">
+       <h4 class="font-semibold mb-2 mt-6 text-gray-700">Pièces justificatives</h4>
+       <div class="grid grid-cols-2 gap-4 mb-6">
+         <div class="field" *ngFor="let doc of requiredDocs">
+           <label>{{ doc.libelle }} <span class="text-red-600">*</span></label>
+           <input type="file" (change)="onFileChange($event, doc.uuid)" class="adouk-input-file" />
+         </div>
+       </div>
+     </div>
+
+      <!-- ✅ Boutons -->
+      <div class="flex justify-end gap-2">
+        <button pButton type="button" class="p-button-outlined p-button-danger" (click)="resetForm()">Fermer</button>
+        <button
+          pButton
+          type="submit"
+          label="Enregistrer"
+          [loading]="processing"
+          [disabled]="form.invalid"
+          class="p-button"
+        ></button>
+      </div>
+    </form>
+
+  </p-dialog>
+</div>
+<p-toast />

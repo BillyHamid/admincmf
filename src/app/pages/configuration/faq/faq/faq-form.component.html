@@ -1,0 +1,23 @@
+<button *ngIf="!forEdit" (click)="showDialog()" pButton type="button" label="Nouvelle FAQ" icon="pi pi-plus" class="p-button-outlined"></button>
+<button *ngIf="forEdit" (click)="showDialog()" pButton type="button" icon="pi pi-pencil" class="p-button mr-2"></button>
+
+<div class="card flex justify-center">
+  <p-dialog [header]="forEdit ? 'Modifier la FAQ' : 'Nouvelle FAQ'" [(visible)]="visible" [modal]="true" [style]="{ width: '45%' }">
+    <form [formGroup]="faqForm">
+      <div class="field mb-4">
+        <label for="libelleQuestion">Question <span class="text-red-700">*</span></label>
+        <input formControlName="libelleQuestion" id="libelleQuestion" class="adouk-input" />
+      </div>
+
+      <div class="field mb-4">
+        <label for="reponseQuestion">Réponse <span class="text-red-700">*</span></label>
+        <textarea formControlName="reponseQuestion" id="reponseQuestion" rows="5" class="adouk-input"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <p-button label="Fermer" severity="danger" (click)="visible = false" />
+        <p-button [disabled]="faqForm.invalid" [loading]="processing" label="Enregistrer" (click)="saveForm()" />
+      </div>
+    </form>
+  </p-dialog>
+</div>
