@@ -1,6 +1,6 @@
 export const environment = {
-  backendUrl: "https://finacomplus.adouk.tech/io",
-  restBaseUrl: "https://finacomplus.adouk.tech/io",
+  backendUrl: "https://cmfback.onrender.com",
+  restBaseUrl: "https://cmfback.onrender.com",
   jwtKey: "finacom-jwt",
   sessionKey: "finacom-session",
 };
