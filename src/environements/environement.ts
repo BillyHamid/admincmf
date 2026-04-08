@@ -1,6 +1,6 @@
 export const environment = {
-  backendUrl: "http://localhost:8080",
-  restBaseUrl: "http://localhost:8080",
+  backendUrl: "https://cmfback.onrender.com",
+  restBaseUrl: "https://cmfback.onrender.com",
   jwtKey: "adouk-jwt",
   sessionKey: "adouk-session",
 };
